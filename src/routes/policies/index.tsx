@@ -14,7 +14,7 @@ export const Route = createFileRoute('/policies/')({
 type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 
 const getPolicies = async () => {
-    const res = await fetch(`${API_BASE_URL}/policies/`)
+    const res = await fetch(`${API_BASE_URL}/policies`)
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
