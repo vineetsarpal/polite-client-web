@@ -1,6 +1,6 @@
 # Polite
 
-Polite is a modern, lightweight Insurance Policy Management platform
+Polite is a modern, lightweight Insurance Policy Management platform.  
 This repo is the frontend web client for Polite
 
 ## Features
@@ -20,7 +20,7 @@ Visit the deployed frontend app:
 
 This frontend connects to the Polite backend API  
 For API documentation and setup instructions refer to the repo:
-[Polite Backend](https://github.com/vineetsarpal/polite-server)
+[polite-server](https://github.com/vineetsarpal/polite-server)
 
 
 ## Getting Started
