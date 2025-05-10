@@ -13,11 +13,11 @@ export default function AuthButton() {
 
   return isLoggedIn ? (
     <Button onClick={handleLogout} variant="outline">
-      Logout
+      Sign Out
     </Button>
   ) : (
-    <Link to="/login">
-      <Button variant="solid">Sign In</Button>
-    </Link>
+      <Link to='/login'>
+        <Button variant={"solid"}>Sign In</Button>
+      </Link>
   )
 }

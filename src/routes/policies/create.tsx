@@ -3,7 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { SimpleGrid, Input, Button, Field, Flex, Text } from '@chakra-ui/react'
-import { API_BASE_URL } from '@/config/config'
+import { API_BASE_URL, API_VERSION } from '@/config/config'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/policies/create')({
   component: RouteComponent,
@@ -14,7 +15,7 @@ type FormData = paths["/policies/"]["post"]["requestBody"]["content"]["applicati
 const createPolicy = async (data: FormData) => {
     const token = localStorage.getItem("token")
 
-    const res = await fetch(`${API_BASE_URL}/policies`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -32,9 +33,18 @@ const createPolicy = async (data: FormData) => {
 
 
 function RouteComponent() {
+    const token = localStorage.getItem("token")
     const { register, handleSubmit } = useForm<FormData>()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
+
+    useEffect(() => {
+      if (!token) {
+        navigate({ to: '/login'})
+      } else if (error && (error as any).status === 401) {
+        navigate({ to: '/login' })
+      }
+    }, [token, navigate])
 
     const { mutate, isPending, error } = useMutation({
         mutationFn: createPolicy,

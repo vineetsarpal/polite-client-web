@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { paths } from "@/types/openapi"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { API_BASE_URL } from "@/config/config"
+import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
@@ -16,7 +16,7 @@ type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content
 type UpdatePayload = paths["/policies/{policy_id}"]["put"]["requestBody"]["content"]["application/json"]
 
 const getPolicy = async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/policies/${id}`)
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies/${id}`)
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
@@ -24,7 +24,7 @@ const getPolicy = async (id: string) => {
 const updatePolicy = async ({ id, data } : { id: string; data: UpdatePayload }) => {
     const token = localStorage.getItem("token")
 
-    const res = await fetch(`${API_BASE_URL}/policies/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies/${id}`, {
         method: 'PUT',
         headers: {
             "Content-Type": "application/json",

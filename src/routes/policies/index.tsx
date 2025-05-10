@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Button, Card, SimpleGrid, CloseButton, Dialog, Portal } from "@chakra-ui/react"
-import { Link } from "@tanstack/react-router"
+import { Link, useNavigate } from "@tanstack/react-router"
 import { paths } from "@/types/openapi"
-import { API_BASE_URL } from "@/config/config"
+import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export const Route = createFileRoute('/policies/')({
   component: RouteComponent,
@@ -14,7 +14,13 @@ export const Route = createFileRoute('/policies/')({
 type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 
 const getPolicies = async () => {
-    const res = await fetch(`${API_BASE_URL}/policies`)
+    const token = localStorage.getItem("token")
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+    })
+
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
@@ -22,7 +28,7 @@ const getPolicies = async () => {
 const deletePolicy = async (id: string) => {
   const token = localStorage.getItem("token")
 
-  const res = await fetch(`${API_BASE_URL}/policies/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies/${id}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -33,14 +39,25 @@ const deletePolicy = async (id: string) => {
 }
 
 function RouteComponent() {
+    const token = localStorage.getItem("token")
     const queryClient = useQueryClient()
     const [idToDelete, setIdToDelete] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     const { data, isLoading, error } = useQuery<Policy[]>({
         queryKey: ['policies'],
         queryFn: getPolicies,
         staleTime: 5000, // cache query for these many milisecs
+        enabled: !!token
     })
+
+    useEffect(() => {
+      if (!token) {
+        navigate({ to: '/login'})
+      } else if (error && (error as any).status === 401) {
+        navigate({ to: '/login' })
+      }
+    }, [token, navigate])
 
     const { mutate, isPending } = useMutation({
       mutationFn: deletePolicy,

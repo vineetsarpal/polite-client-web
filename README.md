@@ -6,7 +6,8 @@ This repo is the React frontend web client for Polite
 ## Features
 
 - User authentication
-- Create insurance policies
+- Continue as a guest user
+- Create policies
 - View and ediit policies
 - Responsive, user-friendly UI
 
@@ -49,8 +50,12 @@ For API documentation and setup instructions refer to the repo:
 
 
 6. **Extract types from OpenAPI**
-  Keep the types at Frontend in sync with the API
-  ```
-  npm install -D openapi-typescript
-  npx openapi-typescript http://localhost:8000/openapi.json -o src/types/openapi.ts
-  ```
+    Keep the types in sync with the API
+    ```
+    npm install -D openapi-typescript
+    ```
+    
+    e.g. If a local backend API is runnning on port 8000, run:
+    ```
+    npx openapi-typescript http://localhost:8000/openapi.json -o src/types/openapi.ts
+    ```

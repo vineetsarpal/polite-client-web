@@ -32,12 +32,12 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <Provider>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
             <RouterProvider router={router} />
             <ReactQueryDevtools initialIsOpen={false} />
-          </QueryClientProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </Provider>
     </StrictMode>,
   )
