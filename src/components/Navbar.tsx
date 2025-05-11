@@ -4,13 +4,12 @@ import { ColorModeButton } from "@/components/ui/color-mode"
 import AuthButton from "./AuthButton"
 import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/context/AuthContext"
-import { useEffect } from "react"
 import { userService } from "@/services/userService"
 
 function Navbar() {
     const { isLoggedIn, token } = useAuth()
 
-    const { data: user, refetch } = useQuery({
+    const { data: user } = useQuery({
         queryKey: ["currentUser", token],
         queryFn: () => userService.getCurrentUser(token),
         staleTime: 5 * 60 * 1000,
