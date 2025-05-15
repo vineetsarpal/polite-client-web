@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form"
 import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useAuth } from "@/context/AuthContext"
 
 
 export const Route = createFileRoute('/policies/$policyId')({
@@ -16,15 +17,15 @@ type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content
 type UpdatePayload = paths["/policies/{policy_id}"]["put"]["requestBody"]["content"]["application/json"]
 
 const getPolicy = async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies/${id}`)
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`)
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
 
-const updatePolicy = async ({ id, data } : { id: string; data: UpdatePayload }) => {
-    const token = localStorage.getItem("token")
+const updatePolicy = async (payload : { id: string, token: string | null, data: UpdatePayload }) => {
+    const { id, token, data } = payload
 
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`, {
         method: 'PUT',
         headers: {
             "Content-Type": "application/json",
@@ -37,6 +38,7 @@ const updatePolicy = async ({ id, data } : { id: string; data: UpdatePayload }) 
 }
 
 function RouteComponent() {
+    const { token } = useAuth()
     const [editMode, setEditMode] = useState(false)
     const { policyId } = Route.useParams()
     const queryClient = useQueryClient()
@@ -82,7 +84,7 @@ function RouteComponent() {
     })
 
     const onSubmit = (formData: UpdatePayload) => {
-        mutate({ id: policyId, data: formData })
+        mutate({ id: policyId, token, data: formData })
     }
 
     if (isLoading || !data) return <p>Loading...</p>

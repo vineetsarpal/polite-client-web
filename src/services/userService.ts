@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/config/config"
+import { API_BASE_URL, API_VERSION } from "@/config/config"
 import { paths } from "@/types/openapi"
 
 type User = paths["/users/me/"]["get"]["responses"]["200"]["content"]["application/json"]
@@ -6,7 +6,7 @@ type User = paths["/users/me/"]["get"]["responses"]["200"]["content"]["applicati
 export const userService = {
 //    // Get current user API call
     getCurrentUser: async (token: string | null): Promise<User> => {
-        const res = await fetch(`${API_BASE_URL}/users/me`, {
+        const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/auth/users/me`, {
             headers: {
                 Authorization: `Bearer ${token}`
             },

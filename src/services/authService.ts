@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/config/config"
+import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 type FormData = {
   username: string
@@ -17,7 +17,7 @@ export const authService = {
     form.append("username", data.username)
     form.append("password", data.password)
 
-    const res = await fetch(`${API_BASE_URL}/login`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

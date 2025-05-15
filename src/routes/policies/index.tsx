@@ -6,6 +6,7 @@ import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from "react"
+import { useAuth } from "@/context/AuthContext"
 
 export const Route = createFileRoute('/policies/')({
   component: RouteComponent,
@@ -13,9 +14,8 @@ export const Route = createFileRoute('/policies/')({
 
 type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 
-const getPolicies = async () => {
-    const token = localStorage.getItem("token")
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies`, {
+const getPolicies = async (token: string | null) => {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -25,10 +25,9 @@ const getPolicies = async () => {
     return res.json()
 }
 
-const deletePolicy = async (id: string) => {
-  const token = localStorage.getItem("token")
-
-  const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies/${id}`, {
+const deletePolicy = async (payload: {id: string, token: string | null})  => {
+  const { id, token } = payload 
+  const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`, {
     method: "DELETE",
     headers: {
       "Authorization": `Bearer ${token}`,
@@ -39,14 +38,14 @@ const deletePolicy = async (id: string) => {
 }
 
 function RouteComponent() {
-    const token = localStorage.getItem("token")
+    const { token } = useAuth()
     const queryClient = useQueryClient()
     const [idToDelete, setIdToDelete] = useState<string | null>(null)
     const navigate = useNavigate()
 
     const { data, isLoading, error } = useQuery<Policy[]>({
         queryKey: ['policies'],
-        queryFn: getPolicies,
+        queryFn: () => getPolicies(token),
         staleTime: 5000, // cache query for these many milisecs
         enabled: !!token
     })
@@ -71,7 +70,7 @@ function RouteComponent() {
     }
 
     const confirmDelete = () => {
-      if (idToDelete) mutate(idToDelete)
+      if (idToDelete && token) mutate({ id: idToDelete, token })
     }
 
     if (isLoading) return <p> Loading</p>

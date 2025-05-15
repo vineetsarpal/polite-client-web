@@ -15,7 +15,7 @@ type FormData = paths["/policies/"]["post"]["requestBody"]["content"]["applicati
 const createPolicy = async (data: FormData) => {
     const token = localStorage.getItem("token")
 
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION}/policies`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
