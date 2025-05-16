@@ -8,7 +8,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 
-export const Route = createFileRoute('/policies/')({
+export const Route = createFileRoute('/_dashboard/policies/')({
   component: RouteComponent,
 })
 

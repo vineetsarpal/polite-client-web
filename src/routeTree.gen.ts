@@ -13,11 +13,12 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
+import { Route as DashboardRouteImport } from './routes/_dashboard/route'
 import { Route as IndexImport } from './routes/index'
-import { Route as PoliciesIndexImport } from './routes/policies/index'
-import { Route as PoliciesUpdateImport } from './routes/policies/update'
-import { Route as PoliciesCreateImport } from './routes/policies/create'
-import { Route as PoliciesPolicyIdImport } from './routes/policies/$policyId'
+import { Route as DashboardPoliciesIndexImport } from './routes/_dashboard/policies/index'
+import { Route as DashboardPoliciesUpdateImport } from './routes/_dashboard/policies/update'
+import { Route as DashboardPoliciesCreateImport } from './routes/_dashboard/policies/create'
+import { Route as DashboardPoliciesPolicyIdImport } from './routes/_dashboard/policies/$policyId'
 
 // Create/Update Routes
 
@@ -33,34 +34,39 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardRouteRoute = DashboardRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const PoliciesIndexRoute = PoliciesIndexImport.update({
+const DashboardPoliciesIndexRoute = DashboardPoliciesIndexImport.update({
   id: '/policies/',
   path: '/policies/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const PoliciesUpdateRoute = PoliciesUpdateImport.update({
+const DashboardPoliciesUpdateRoute = DashboardPoliciesUpdateImport.update({
   id: '/policies/update',
   path: '/policies/update',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const PoliciesCreateRoute = PoliciesCreateImport.update({
+const DashboardPoliciesCreateRoute = DashboardPoliciesCreateImport.update({
   id: '/policies/create',
   path: '/policies/create',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const PoliciesPolicyIdRoute = PoliciesPolicyIdImport.update({
+const DashboardPoliciesPolicyIdRoute = DashboardPoliciesPolicyIdImport.update({
   id: '/policies/$policyId',
   path: '/policies/$policyId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -72,6 +78,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
     '/about': {
@@ -88,74 +101,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/policies/$policyId': {
-      id: '/policies/$policyId'
+    '/_dashboard/policies/$policyId': {
+      id: '/_dashboard/policies/$policyId'
       path: '/policies/$policyId'
       fullPath: '/policies/$policyId'
-      preLoaderRoute: typeof PoliciesPolicyIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof DashboardPoliciesPolicyIdImport
+      parentRoute: typeof DashboardRouteImport
     }
-    '/policies/create': {
-      id: '/policies/create'
+    '/_dashboard/policies/create': {
+      id: '/_dashboard/policies/create'
       path: '/policies/create'
       fullPath: '/policies/create'
-      preLoaderRoute: typeof PoliciesCreateImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof DashboardPoliciesCreateImport
+      parentRoute: typeof DashboardRouteImport
     }
-    '/policies/update': {
-      id: '/policies/update'
+    '/_dashboard/policies/update': {
+      id: '/_dashboard/policies/update'
       path: '/policies/update'
       fullPath: '/policies/update'
-      preLoaderRoute: typeof PoliciesUpdateImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof DashboardPoliciesUpdateImport
+      parentRoute: typeof DashboardRouteImport
     }
-    '/policies/': {
-      id: '/policies/'
+    '/_dashboard/policies/': {
+      id: '/_dashboard/policies/'
       path: '/policies'
       fullPath: '/policies'
-      preLoaderRoute: typeof PoliciesIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof DashboardPoliciesIndexImport
+      parentRoute: typeof DashboardRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface DashboardRouteRouteChildren {
+  DashboardPoliciesPolicyIdRoute: typeof DashboardPoliciesPolicyIdRoute
+  DashboardPoliciesCreateRoute: typeof DashboardPoliciesCreateRoute
+  DashboardPoliciesUpdateRoute: typeof DashboardPoliciesUpdateRoute
+  DashboardPoliciesIndexRoute: typeof DashboardPoliciesIndexRoute
+}
+
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardPoliciesPolicyIdRoute: DashboardPoliciesPolicyIdRoute,
+  DashboardPoliciesCreateRoute: DashboardPoliciesCreateRoute,
+  DashboardPoliciesUpdateRoute: DashboardPoliciesUpdateRoute,
+  DashboardPoliciesIndexRoute: DashboardPoliciesIndexRoute,
+}
+
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/policies/$policyId': typeof PoliciesPolicyIdRoute
-  '/policies/create': typeof PoliciesCreateRoute
-  '/policies/update': typeof PoliciesUpdateRoute
-  '/policies': typeof PoliciesIndexRoute
+  '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
+  '/policies/create': typeof DashboardPoliciesCreateRoute
+  '/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/policies': typeof DashboardPoliciesIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/policies/$policyId': typeof PoliciesPolicyIdRoute
-  '/policies/create': typeof PoliciesCreateRoute
-  '/policies/update': typeof PoliciesUpdateRoute
-  '/policies': typeof PoliciesIndexRoute
+  '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
+  '/policies/create': typeof DashboardPoliciesCreateRoute
+  '/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/policies': typeof DashboardPoliciesIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_dashboard': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
-  '/policies/$policyId': typeof PoliciesPolicyIdRoute
-  '/policies/create': typeof PoliciesCreateRoute
-  '/policies/update': typeof PoliciesUpdateRoute
-  '/policies/': typeof PoliciesIndexRoute
+  '/_dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
+  '/_dashboard/policies/create': typeof DashboardPoliciesCreateRoute
+  '/_dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/_dashboard/policies/': typeof DashboardPoliciesIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | ''
     | '/about'
     | '/login'
     | '/policies/$policyId'
@@ -165,6 +200,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | ''
     | '/about'
     | '/login'
     | '/policies/$policyId'
@@ -174,33 +210,28 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_dashboard'
     | '/about'
     | '/login'
-    | '/policies/$policyId'
-    | '/policies/create'
-    | '/policies/update'
-    | '/policies/'
+    | '/_dashboard/policies/$policyId'
+    | '/_dashboard/policies/create'
+    | '/_dashboard/policies/update'
+    | '/_dashboard/policies/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
-  PoliciesPolicyIdRoute: typeof PoliciesPolicyIdRoute
-  PoliciesCreateRoute: typeof PoliciesCreateRoute
-  PoliciesUpdateRoute: typeof PoliciesUpdateRoute
-  PoliciesIndexRoute: typeof PoliciesIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
-  PoliciesPolicyIdRoute: PoliciesPolicyIdRoute,
-  PoliciesCreateRoute: PoliciesCreateRoute,
-  PoliciesUpdateRoute: PoliciesUpdateRoute,
-  PoliciesIndexRoute: PoliciesIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -214,16 +245,22 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_dashboard",
         "/about",
-        "/login",
-        "/policies/$policyId",
-        "/policies/create",
-        "/policies/update",
-        "/policies/"
+        "/login"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_dashboard": {
+      "filePath": "_dashboard/route.tsx",
+      "children": [
+        "/_dashboard/policies/$policyId",
+        "/_dashboard/policies/create",
+        "/_dashboard/policies/update",
+        "/_dashboard/policies/"
+      ]
     },
     "/about": {
       "filePath": "about.tsx"
@@ -231,17 +268,21 @@ export const routeTree = rootRoute
     "/login": {
       "filePath": "login.tsx"
     },
-    "/policies/$policyId": {
-      "filePath": "policies/$policyId.tsx"
+    "/_dashboard/policies/$policyId": {
+      "filePath": "_dashboard/policies/$policyId.tsx",
+      "parent": "/_dashboard"
     },
-    "/policies/create": {
-      "filePath": "policies/create.tsx"
+    "/_dashboard/policies/create": {
+      "filePath": "_dashboard/policies/create.tsx",
+      "parent": "/_dashboard"
     },
-    "/policies/update": {
-      "filePath": "policies/update.tsx"
+    "/_dashboard/policies/update": {
+      "filePath": "_dashboard/policies/update.tsx",
+      "parent": "/_dashboard"
     },
-    "/policies/": {
-      "filePath": "policies/index.tsx"
+    "/_dashboard/policies/": {
+      "filePath": "_dashboard/policies/index.tsx",
+      "parent": "/_dashboard"
     }
   }
 }

@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 type AuthContextType = {
@@ -12,7 +11,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null)
-  const queryClient = useQueryClient()
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
@@ -27,7 +25,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('token')
     setToken(null)
-    queryClient.invalidateQueries({ queryKey: ["currentUser"]})
   }
 
   const contextValue: AuthContextType = {

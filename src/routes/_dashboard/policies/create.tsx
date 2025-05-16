@@ -6,7 +6,7 @@ import { SimpleGrid, Input, Button, Field, Flex, Text } from '@chakra-ui/react'
 import { API_BASE_URL, API_VERSION } from '@/config/config'
 import { useEffect } from 'react'
 
-export const Route = createFileRoute('/policies/create')({
+export const Route = createFileRoute('/_dashboard/policies/create')({
   component: RouteComponent,
 })
 

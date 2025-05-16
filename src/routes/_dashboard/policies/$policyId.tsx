@@ -9,7 +9,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAuth } from "@/context/AuthContext"
 
 
-export const Route = createFileRoute('/policies/$policyId')({
+export const Route = createFileRoute('/_dashboard/policies/$policyId')({
   component: RouteComponent,
 })
 

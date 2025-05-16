@@ -1,4 +1,4 @@
-import { Flex, HStack, Spacer, Text } from "@chakra-ui/react"
+import { Flex, Heading, HStack, Spacer, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { ColorModeButton } from "@/components/ui/color-mode"
 import AuthButton from "./AuthButton"
@@ -16,15 +16,10 @@ function Navbar() {
         enabled: isLoggedIn && !!token,
     })
 
-    // useEffect(() => {
-    // if (isLoggedIn && token) {
-    //     refetch(); // Manually refetch data when the user logs in
-    //     }
-    // }, [token, isLoggedIn, refetch]);
-
   return (
     <Flex as={"nav"} p={2} mx={10} gap={2} alignItems={"center"} wrap={"wrap"}>
         <HStack gap={10}>
+            <Heading size="3xl" fontWeight="bold">Polite</Heading>
             <Link to="/"  activeProps={{ className: 'font-bold' }} activeOptions={{ exact: true }}>
                 Home
             </Link> 
