@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as PrivateImport } from './routes/private'
 import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
 import { Route as DashboardRouteImport } from './routes/_dashboard/route'
@@ -21,6 +22,12 @@ import { Route as DashboardPoliciesCreateImport } from './routes/_dashboard/poli
 import { Route as DashboardPoliciesPolicyIdImport } from './routes/_dashboard/policies/$policyId'
 
 // Create/Update Routes
+
+const PrivateRoute = PrivateImport.update({
+  id: '/private',
+  path: '/private',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -101,6 +108,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/private': {
+      id: '/private'
+      path: '/private'
+      fullPath: '/private'
+      preLoaderRoute: typeof PrivateImport
+      parentRoute: typeof rootRoute
+    }
     '/_dashboard/policies/$policyId': {
       id: '/_dashboard/policies/$policyId'
       path: '/policies/$policyId'
@@ -157,6 +171,7 @@ export interface FileRoutesByFullPath {
   '': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/private': typeof PrivateRoute
   '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
   '/policies/create': typeof DashboardPoliciesCreateRoute
   '/policies/update': typeof DashboardPoliciesUpdateRoute
@@ -168,6 +183,7 @@ export interface FileRoutesByTo {
   '': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/private': typeof PrivateRoute
   '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
   '/policies/create': typeof DashboardPoliciesCreateRoute
   '/policies/update': typeof DashboardPoliciesUpdateRoute
@@ -180,6 +196,7 @@ export interface FileRoutesById {
   '/_dashboard': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
+  '/private': typeof PrivateRoute
   '/_dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
   '/_dashboard/policies/create': typeof DashboardPoliciesCreateRoute
   '/_dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
@@ -193,6 +210,7 @@ export interface FileRouteTypes {
     | ''
     | '/about'
     | '/login'
+    | '/private'
     | '/policies/$policyId'
     | '/policies/create'
     | '/policies/update'
@@ -203,6 +221,7 @@ export interface FileRouteTypes {
     | ''
     | '/about'
     | '/login'
+    | '/private'
     | '/policies/$policyId'
     | '/policies/create'
     | '/policies/update'
@@ -213,6 +232,7 @@ export interface FileRouteTypes {
     | '/_dashboard'
     | '/about'
     | '/login'
+    | '/private'
     | '/_dashboard/policies/$policyId'
     | '/_dashboard/policies/create'
     | '/_dashboard/policies/update'
@@ -225,6 +245,7 @@ export interface RootRouteChildren {
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
+  PrivateRoute: typeof PrivateRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -232,6 +253,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
+  PrivateRoute: PrivateRoute,
 }
 
 export const routeTree = rootRoute
@@ -247,7 +269,8 @@ export const routeTree = rootRoute
         "/",
         "/_dashboard",
         "/about",
-        "/login"
+        "/login",
+        "/private"
       ]
     },
     "/": {
@@ -267,6 +290,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/private": {
+      "filePath": "private.tsx"
     },
     "/_dashboard/policies/$policyId": {
       "filePath": "_dashboard/policies/$policyId.tsx",

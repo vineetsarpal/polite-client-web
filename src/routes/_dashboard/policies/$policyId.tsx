@@ -7,6 +7,7 @@ import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAuth } from "@/context/AuthContext"
+import { useAuth0 } from "@auth0/auth0-react"
 
 
 export const Route = createFileRoute('/_dashboard/policies/$policyId')({
@@ -22,14 +23,14 @@ const getPolicy = async (id: string) => {
     return res.json()
 }
 
-const updatePolicy = async (payload : { id: string, token: string | null, data: UpdatePayload }) => {
-    const { id, token, data } = payload
-
+const updatePolicy = async (payload : { id: string, data: UpdatePayload, token: string | null, token0: string | null }) => {
+    const { id, data, token, token0 } = payload
+    const bearerToken = token ? token : token0
     const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`, {
         method: 'PUT',
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${bearerToken}`,
         },
         body: JSON.stringify(data),
     })
@@ -43,6 +44,17 @@ function RouteComponent() {
     const { policyId } = Route.useParams()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
+
+     // Auth0
+    const { getAccessTokenSilently } = useAuth0()
+    const [auth0Token, setAuth0Token] = useState(null)
+    useEffect(() => {
+        const fetchAuth0Token = async () => {
+        const t: string | any = await getAccessTokenSilently()
+        setAuth0Token(t);
+      }
+      fetchAuth0Token()
+    }, [getAccessTokenSilently])
 
     const { data, isLoading, error } = useQuery<Policy>({
         queryKey: ["policies", policyId],
@@ -84,7 +96,7 @@ function RouteComponent() {
     })
 
     const onSubmit = (formData: UpdatePayload) => {
-        mutate({ id: policyId, token, data: formData })
+        mutate({ id: policyId, data: formData, token, token0: auth0Token })
     }
 
     if (isLoading || !data) return <p>Loading...</p>

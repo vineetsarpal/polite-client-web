@@ -4,7 +4,9 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { SimpleGrid, Input, Button, Field, Flex, Text } from '@chakra-ui/react'
 import { API_BASE_URL, API_VERSION } from '@/config/config'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { useAuth0 } from '@auth0/auth0-react'
 
 export const Route = createFileRoute('/_dashboard/policies/create')({
   component: RouteComponent,
@@ -12,14 +14,14 @@ export const Route = createFileRoute('/_dashboard/policies/create')({
 
 type FormData = paths["/policies/"]["post"]["requestBody"]["content"]["application/json"]
 
-const createPolicy = async (data: FormData) => {
-    const token = localStorage.getItem("token")
-
+const createPolicy = async (payload: { data: FormData, token: string | null, token0: string | null }) => {
+    const { data, token, token0 } = payload
+    const bearerToken = token ? token : token0
     const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            "Authorization": `Bearer ${bearerToken}`,
         },
         body: JSON.stringify(data)
     })
@@ -33,18 +35,21 @@ const createPolicy = async (data: FormData) => {
 
 
 function RouteComponent() {
-    const token = localStorage.getItem("token")
+    const { token } = useAuth()
     const { register, handleSubmit } = useForm<FormData>()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
 
+    // Auth0
+    const { getAccessTokenSilently } = useAuth0()
+    const [auth0Token, setAuth0Token] = useState(null)
     useEffect(() => {
-      if (!token) {
-        navigate({ to: '/login'})
-      } else if (error && (error as any).status === 401) {
-        navigate({ to: '/login' })
+        const fetchAuth0Token = async () => {
+        const t: string | any = await getAccessTokenSilently()
+        setAuth0Token(t);
       }
-    }, [token, navigate])
+      fetchAuth0Token()
+    }, [getAccessTokenSilently])
 
     const { mutate, isPending, error } = useMutation({
         mutationFn: createPolicy,
@@ -55,7 +60,7 @@ function RouteComponent() {
     })
 
     const onSubmit = (data: FormData) => {
-        mutate(data)
+        mutate({ data, token, token0: auth0Token})
     }
 
   return (

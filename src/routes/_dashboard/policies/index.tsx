@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Button, Card, SimpleGrid, CloseButton, Dialog, Portal } from "@chakra-ui/react"
-import { Link, useNavigate } from "@tanstack/react-router"
+import { Link } from "@tanstack/react-router"
 import { paths } from "@/types/openapi"
 import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
+import { useAuth0 } from "@auth0/auth0-react"
 
 export const Route = createFileRoute('/_dashboard/policies/')({
   component: RouteComponent,
@@ -14,10 +15,11 @@ export const Route = createFileRoute('/_dashboard/policies/')({
 
 type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 
-const getPolicies = async (token: string | null) => {
+const getPolicies = async (token: string | null, token0: string | null) => {
+    const bearerToken = token ? token : token0
     const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies`, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${bearerToken}`,
         },
     })
 
@@ -25,12 +27,13 @@ const getPolicies = async (token: string | null) => {
     return res.json()
 }
 
-const deletePolicy = async (payload: {id: string, token: string | null})  => {
-  const { id, token } = payload 
+const deletePolicy = async (payload: {id: string, token: string | null, token0: string | null})  => {
+  const { id, token, token0 } = payload
+  const bearerToken = token ? token : token0
   const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`, {
     method: "DELETE",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${bearerToken}`,
     },
   })
   if (!res.ok) throw new Error("Failed to delete policy")
@@ -39,24 +42,28 @@ const deletePolicy = async (payload: {id: string, token: string | null})  => {
 
 function RouteComponent() {
     const { token } = useAuth()
+    
     const queryClient = useQueryClient()
     const [idToDelete, setIdToDelete] = useState<string | null>(null)
-    const navigate = useNavigate()
+
+    // Auth0
+    const { getAccessTokenSilently } = useAuth0()
+    const [auth0Token, setAuth0Token] = useState(null)
+    useEffect(() => {
+        const fetchAuth0Token = async () => {
+        const t: string | any = await getAccessTokenSilently()
+        setAuth0Token(t);
+      }
+      fetchAuth0Token()
+    }, [getAccessTokenSilently])
+
 
     const { data, isLoading, error } = useQuery<Policy[]>({
         queryKey: ['policies'],
-        queryFn: () => getPolicies(token),
+        queryFn: () => getPolicies(token, auth0Token),
         staleTime: 5000, // cache query for these many milisecs
-        enabled: !!token
+        enabled: !!token || !!auth0Token
     })
-
-    useEffect(() => {
-      if (!token) {
-        navigate({ to: '/login'})
-      } else if (error && (error as any).status === 401) {
-        navigate({ to: '/login' })
-      }
-    }, [token, navigate])
 
     const { mutate, isPending } = useMutation({
       mutationFn: deletePolicy,
@@ -70,7 +77,7 @@ function RouteComponent() {
     }
 
     const confirmDelete = () => {
-      if (idToDelete && token) mutate({ id: idToDelete, token })
+      if (idToDelete && token) mutate({ id: idToDelete, token, token0: auth0Token })
     }
 
     if (isLoading) return <p> Loading</p>

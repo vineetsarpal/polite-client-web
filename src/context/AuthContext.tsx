@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('token')
     setToken(null)
+    
   }
 
   const contextValue: AuthContextType = {

@@ -8,7 +8,7 @@ export default function AuthButton() {
 
   const handleLogout = () => {
     logout()
-    navigate({ to: '/login' })
+    navigate({ to: '/'})
   }
 
   return isLoggedIn ? (
@@ -17,7 +17,7 @@ export default function AuthButton() {
     </Button>
   ) : (
       <Link to='/login'>
-        <Button variant={"solid"}>Sign In</Button>
+        <Button variant={"solid"}>Basic Sign In</Button>
       </Link>
   )
 }
