@@ -1,7 +1,7 @@
 import { API_BASE_URL, API_VERSION } from "@/config/config"
 import { paths } from "@/types/openapi"
 
-type User = paths["/users/me/"]["get"]["responses"]["200"]["content"]["application/json"]
+type User = paths["/api/v1/auth/users/me/"]["get"]["responses"]["200"]["content"]["application/json"]
 
 export const userService = {
 //    // Get current user API call
