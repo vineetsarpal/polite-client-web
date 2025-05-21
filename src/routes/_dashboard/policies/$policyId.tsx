@@ -14,8 +14,8 @@ export const Route = createFileRoute('/_dashboard/policies/$policyId')({
   component: RouteComponent,
 })
 
-type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
-type UpdatePayload = paths["/policies/{policy_id}"]["put"]["requestBody"]["content"]["application/json"]
+type Policy = paths["/api/v1/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
+type UpdatePayload = paths["/api/v1/policies/{policy_id}"]["put"]["requestBody"]["content"]["application/json"]
 
 const getPolicy = async (id: string) => {
     const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`)

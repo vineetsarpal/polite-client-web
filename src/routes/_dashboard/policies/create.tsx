@@ -12,7 +12,7 @@ export const Route = createFileRoute('/_dashboard/policies/create')({
   component: RouteComponent,
 })
 
-type FormData = paths["/policies/"]["post"]["requestBody"]["content"]["application/json"]
+type FormData = paths["/api/v1/policies/"]["post"]["requestBody"]["content"]["application/json"]
 
 const createPolicy = async (payload: { data: FormData, token: string | null, token0: string | null }) => {
     const { data, token, token0 } = payload

@@ -4,6 +4,9 @@ import { Link } from "@tanstack/react-router"
 function Sidebar() {
   return (
     <VStack p={10} align={"start"}>
+        <Link to={'/users'}>
+            Users
+        </Link>
         <Link to={'/policies'}>
             Policies
         </Link>

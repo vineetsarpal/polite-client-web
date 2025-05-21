@@ -13,7 +13,7 @@ export const Route = createFileRoute('/_dashboard/policies/')({
   component: RouteComponent,
 })
 
-type Policy = paths["/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
+type Policy = paths["/api/v1/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 
 const getPolicies = async (token: string | null, token0: string | null) => {
     const bearerToken = token ? token : token0

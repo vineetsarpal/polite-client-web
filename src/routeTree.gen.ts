@@ -16,7 +16,9 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
 import { Route as DashboardRouteImport } from './routes/_dashboard/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as DashboardUsersIndexImport } from './routes/_dashboard/users/index'
 import { Route as DashboardPoliciesIndexImport } from './routes/_dashboard/policies/index'
+import { Route as DashboardUsersUserIdImport } from './routes/_dashboard/users/$userId'
 import { Route as DashboardPoliciesUpdateImport } from './routes/_dashboard/policies/update'
 import { Route as DashboardPoliciesCreateImport } from './routes/_dashboard/policies/create'
 import { Route as DashboardPoliciesPolicyIdImport } from './routes/_dashboard/policies/$policyId'
@@ -52,9 +54,21 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const DashboardUsersIndexRoute = DashboardUsersIndexImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
 const DashboardPoliciesIndexRoute = DashboardPoliciesIndexImport.update({
   id: '/policies/',
   path: '/policies/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+
+const DashboardUsersUserIdRoute = DashboardUsersUserIdImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
@@ -136,11 +150,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPoliciesUpdateImport
       parentRoute: typeof DashboardRouteImport
     }
+    '/_dashboard/users/$userId': {
+      id: '/_dashboard/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/users/$userId'
+      preLoaderRoute: typeof DashboardUsersUserIdImport
+      parentRoute: typeof DashboardRouteImport
+    }
     '/_dashboard/policies/': {
       id: '/_dashboard/policies/'
       path: '/policies'
       fullPath: '/policies'
       preLoaderRoute: typeof DashboardPoliciesIndexImport
+      parentRoute: typeof DashboardRouteImport
+    }
+    '/_dashboard/users/': {
+      id: '/_dashboard/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof DashboardUsersIndexImport
       parentRoute: typeof DashboardRouteImport
     }
   }
@@ -152,14 +180,18 @@ interface DashboardRouteRouteChildren {
   DashboardPoliciesPolicyIdRoute: typeof DashboardPoliciesPolicyIdRoute
   DashboardPoliciesCreateRoute: typeof DashboardPoliciesCreateRoute
   DashboardPoliciesUpdateRoute: typeof DashboardPoliciesUpdateRoute
+  DashboardUsersUserIdRoute: typeof DashboardUsersUserIdRoute
   DashboardPoliciesIndexRoute: typeof DashboardPoliciesIndexRoute
+  DashboardUsersIndexRoute: typeof DashboardUsersIndexRoute
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardPoliciesPolicyIdRoute: DashboardPoliciesPolicyIdRoute,
   DashboardPoliciesCreateRoute: DashboardPoliciesCreateRoute,
   DashboardPoliciesUpdateRoute: DashboardPoliciesUpdateRoute,
+  DashboardUsersUserIdRoute: DashboardUsersUserIdRoute,
   DashboardPoliciesIndexRoute: DashboardPoliciesIndexRoute,
+  DashboardUsersIndexRoute: DashboardUsersIndexRoute,
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
@@ -175,7 +207,9 @@ export interface FileRoutesByFullPath {
   '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
   '/policies/create': typeof DashboardPoliciesCreateRoute
   '/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/users/$userId': typeof DashboardUsersUserIdRoute
   '/policies': typeof DashboardPoliciesIndexRoute
+  '/users': typeof DashboardUsersIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -187,7 +221,9 @@ export interface FileRoutesByTo {
   '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
   '/policies/create': typeof DashboardPoliciesCreateRoute
   '/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/users/$userId': typeof DashboardUsersUserIdRoute
   '/policies': typeof DashboardPoliciesIndexRoute
+  '/users': typeof DashboardUsersIndexRoute
 }
 
 export interface FileRoutesById {
@@ -200,7 +236,9 @@ export interface FileRoutesById {
   '/_dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
   '/_dashboard/policies/create': typeof DashboardPoliciesCreateRoute
   '/_dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/_dashboard/users/$userId': typeof DashboardUsersUserIdRoute
   '/_dashboard/policies/': typeof DashboardPoliciesIndexRoute
+  '/_dashboard/users/': typeof DashboardUsersIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -214,7 +252,9 @@ export interface FileRouteTypes {
     | '/policies/$policyId'
     | '/policies/create'
     | '/policies/update'
+    | '/users/$userId'
     | '/policies'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -225,7 +265,9 @@ export interface FileRouteTypes {
     | '/policies/$policyId'
     | '/policies/create'
     | '/policies/update'
+    | '/users/$userId'
     | '/policies'
+    | '/users'
   id:
     | '__root__'
     | '/'
@@ -236,7 +278,9 @@ export interface FileRouteTypes {
     | '/_dashboard/policies/$policyId'
     | '/_dashboard/policies/create'
     | '/_dashboard/policies/update'
+    | '/_dashboard/users/$userId'
     | '/_dashboard/policies/'
+    | '/_dashboard/users/'
   fileRoutesById: FileRoutesById
 }
 
@@ -282,7 +326,9 @@ export const routeTree = rootRoute
         "/_dashboard/policies/$policyId",
         "/_dashboard/policies/create",
         "/_dashboard/policies/update",
-        "/_dashboard/policies/"
+        "/_dashboard/users/$userId",
+        "/_dashboard/policies/",
+        "/_dashboard/users/"
       ]
     },
     "/about": {
@@ -306,8 +352,16 @@ export const routeTree = rootRoute
       "filePath": "_dashboard/policies/update.tsx",
       "parent": "/_dashboard"
     },
+    "/_dashboard/users/$userId": {
+      "filePath": "_dashboard/users/$userId.tsx",
+      "parent": "/_dashboard"
+    },
     "/_dashboard/policies/": {
       "filePath": "_dashboard/policies/index.tsx",
+      "parent": "/_dashboard"
+    },
+    "/_dashboard/users/": {
+      "filePath": "_dashboard/users/index.tsx",
       "parent": "/_dashboard"
     }
   }
