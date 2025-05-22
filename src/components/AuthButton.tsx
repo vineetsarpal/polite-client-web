@@ -17,7 +17,7 @@ export default function AuthButton() {
     </Button>
   ) : (
       <Link to='/login'>
-        <Button variant={"solid"}>Basic Sign In</Button>
+        <Button variant={"solid"}>Sign In</Button>
       </Link>
   )
 }

@@ -1,5 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
-import { useAuth0 } from "@auth0/auth0-react";
+// import { useAuth0 } from "@auth0/auth0-react";
 import {
   Box,
   Button,
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/')({
 
 function Index() {
     const { isLoggedIn } = useAuth()
-    const { isAuthenticated } = useAuth0()
+    // const { isAuthenticated } = useAuth0()
 
     function Feature({ title, description }: { title: string, description: string}) {
       return (
@@ -46,8 +46,7 @@ function Index() {
             justify="center"
           >
 
-            {!isAuthenticated ? (
-              !isLoggedIn && 
+            {!isLoggedIn ? (
               <Link to="/login">
                 <Button colorScheme="gray" size="lg">Get Started</Button>
               </Link>

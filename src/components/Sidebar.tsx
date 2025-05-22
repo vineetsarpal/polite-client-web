@@ -7,13 +7,18 @@ function Sidebar() {
         <Link to={'/users'}>
             Users
         </Link>
+        <Link to={'/roles'}>
+            Roles
+        </Link>
+        <Link to={'/contacts'}>
+            Contacts
+        </Link>
         <Link to={'/policies'}>
             Policies
         </Link>
         <Link to={'/policies/create'}>
             Create a Policy
         </Link>
-
     </VStack>
   )
 }

@@ -214,8 +214,7 @@ export interface paths {
         /** Update Contact */
         put: operations["update_contact_api_v1_contacts__contact_id__put"];
         post?: never;
-        /** Delete Contact */
-        delete: operations["delete_contact_api_v1_contacts__contact_id__delete"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -253,23 +252,6 @@ export interface paths {
         post?: never;
         /** Delete Policy */
         delete: operations["delete_policy_api_v1_policies__policy_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/private-auth0": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Private */
-        get: operations["private_api_private_auth0_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -504,7 +486,7 @@ export interface components {
             /** Id */
             id: number;
             /** Assigned */
-            assigned: boolean;
+            assigned?: boolean | null;
         };
         /** Token */
         Token: {
@@ -1257,7 +1239,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ContactPublic"];
+                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -1324,37 +1306,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContactPublic"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    delete_contact_api_v1_contacts__contact_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                contact_id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
                 };
             };
             /** @description Validation Error */
@@ -1526,26 +1477,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    private_api_private_auth0_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
                 };
             };
         };

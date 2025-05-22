@@ -5,9 +5,9 @@ import { paths } from "@/types/openapi"
 import { API_BASE_URL, API_VERSION } from "@/config/config"
 
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useAuth } from "@/context/AuthContext"
-import { useAuth0 } from "@auth0/auth0-react"
+// import { useAuth0 } from "@auth0/auth0-react"
 
 export const Route = createFileRoute('/_dashboard/policies/')({
   component: RouteComponent,
@@ -46,23 +46,23 @@ function RouteComponent() {
     const queryClient = useQueryClient()
     const [idToDelete, setIdToDelete] = useState<string | null>(null)
 
-    // Auth0
-    const { getAccessTokenSilently } = useAuth0()
-    const [auth0Token, setAuth0Token] = useState(null)
-    useEffect(() => {
-        const fetchAuth0Token = async () => {
-        const t: string | any = await getAccessTokenSilently()
-        setAuth0Token(t);
-      }
-      fetchAuth0Token()
-    }, [getAccessTokenSilently])
+    // // Auth0
+    // const { getAccessTokenSilently } = useAuth0()
+    // const [auth0Token, setAuth0Token] = useState(null)
+    // useEffect(() => {
+    //     const fetchAuth0Token = async () => {
+    //     const t: string | any = await getAccessTokenSilently()
+    //     setAuth0Token(t);
+    //   }
+    //   fetchAuth0Token()
+    // }, [getAccessTokenSilently])
 
 
     const { data, isLoading, error } = useQuery<Policy[]>({
         queryKey: ['policies'],
-        queryFn: () => getPolicies(token, auth0Token),
+        queryFn: () => getPolicies(token, null),
         staleTime: 5000, // cache query for these many milisecs
-        enabled: !!token || !!auth0Token
+        enabled: !!token
     })
 
     const { mutate, isPending } = useMutation({
@@ -77,7 +77,7 @@ function RouteComponent() {
     }
 
     const confirmDelete = () => {
-      if (idToDelete && token) mutate({ id: idToDelete, token, token0: auth0Token })
+      if (idToDelete && token) mutate({ id: idToDelete, token, token0: null })
     }
 
     if (isLoading) return <p> Loading</p>

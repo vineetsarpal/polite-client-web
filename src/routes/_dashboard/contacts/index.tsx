@@ -1,21 +1,21 @@
 import { API_BASE_URL, API_VERSION } from '@/config/config'
 import { useAuth } from '@/context/AuthContext'
 import { paths } from '@/types/openapi'
-// import { useAuth0 } from '@auth0/auth0-react'
 import { Button, Card, CloseButton, Dialog, Portal, SimpleGrid } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/_dashboard/users/')({
+export const Route = createFileRoute('/_dashboard/contacts/')({
   component: RouteComponent,
 })
 
-type User = paths["/api/v1/users/{user_id}"]["get"]["responses"]["200"]["content"]["application/json"]
+type Contact = paths["/api/v1/contacts/{contact_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 
-const getUsers = async (token: string | null, token0: string | null = null) => {
+const getContacts = async (token: string | null, token0: string | null = null) => {
     const bearerToken = token ? token : token0
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/users`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts`, {
         headers: {
             "Authorization": `Bearer ${bearerToken}`
         }
@@ -24,10 +24,10 @@ const getUsers = async (token: string | null, token0: string | null = null) => {
     return res.json()
 }
 
-const deleteUser = async (payload: {id: string, token: string | null, token0: string | null})  => {
+const deleteContacts = async (payload: {id: string, token: string | null, token0: string | null})  => {
     const { id, token, token0 } = payload
     const bearerToken = token ? token : token0
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/users/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts/${id}`, {
         method: "DELETE",
         headers: {
         "Authorization": `Bearer ${bearerToken}`,
@@ -54,16 +54,16 @@ function RouteComponent() {
     // }, [getAccessTokenSilently])
 
 
-    const { data, isLoading, error } = useQuery<User[]>({
-        queryKey: ["users"],
-        queryFn: () => getUsers(token, null),
+    const { data, isLoading, error } = useQuery<Contact[]>({
+        queryKey: ["contacts"],
+        queryFn: () => getContacts(token),
         enabled: !!token
     })
 
     const { mutate, isPending } = useMutation({
-        mutationFn: deleteUser,
+        mutationFn: deleteContacts,
         onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["policies"] })
+        queryClient.invalidateQueries({ queryKey: ["contacts"] })
       }
     })
 
@@ -82,19 +82,19 @@ function RouteComponent() {
     return (
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={10}>
         {
-            data?.map((user: User) => (
-                <Card.Root key={user.id}> 
-                    <Link to="/users/$userId" params={{ userId: user.id.toString() }} >
-                    <Card.Header>{user.username}</Card.Header>
+            data?.map((contact: Contact) => (
+                <Card.Root key={contact.id}> 
+                    <Link to="/contacts/$contactId" params={{ contactId: contact.id.toString() }} >
+                    <Card.Header>{contact.first_name} {contact.last_name}</Card.Header>
                     <Card.Body>
-                        Email: {user.email}
+                        Type: {contact.type}
                     </Card.Body>
                     </Link>
 
                     <Card.Footer>
                     <Dialog.Root role="alertdialog">
                         <Dialog.Trigger asChild>
-                        <Button variant="outline" size="sm" onClick={() => handleDeleteClick(user.id.toString())}>
+                        <Button variant="outline" size="sm" onClick={() => handleDeleteClick(contact.id.toString())}>
                             Delete
                         </Button>
                         </Dialog.Trigger>
@@ -107,7 +107,7 @@ function RouteComponent() {
                             </Dialog.Header>
                             <Dialog.Body>
                                 <p>
-                                This will permanently delete User ID: {user.id}
+                                This will permanently delete Contact ID: {contact.id}
                                 </p>
                             </Dialog.Body>
                             <Dialog.Footer>
@@ -124,7 +124,6 @@ function RouteComponent() {
                         </Portal>
                     </Dialog.Root> 
                     </Card.Footer>
-
                 </Card.Root>
             ))
         }
