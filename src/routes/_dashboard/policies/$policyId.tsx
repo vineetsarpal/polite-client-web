@@ -39,9 +39,9 @@ const updatePolicy = async (payload : { id: string, data: UpdatePayload, token: 
 }
 
 function RouteComponent() {
+    const { policyId } = Route.useParams()
     const { token } = useAuth()
     const [editMode, setEditMode] = useState(false)
-    const { policyId } = Route.useParams()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
 

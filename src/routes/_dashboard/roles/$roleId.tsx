@@ -1,10 +1,13 @@
 import { API_BASE_URL, API_VERSION } from '@/config/config'
 import { paths } from '@/types/openapi'
-import { Box, Button, Checkbox, Heading, HStack, Spacer, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Flex, Heading, HStack, Spacer, Tabs, Text, VStack } from '@chakra-ui/react'
+import { Toaster, toaster } from '@/components/ui/toaster'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { LuUser, LuSquareCheck } from 'react-icons/lu'
 
 import { createFileRoute } from '@tanstack/react-router'
+
 
 export const Route = createFileRoute('/_dashboard/roles/$roleId')({
   component: RouteComponent,
@@ -31,9 +34,10 @@ const getRolePermissions = async (roleId: string | any) => {
 
 function RouteComponent() {
     const { roleId } = Route.useParams()
+    const [editMode, setEditMode] = useState(false)
     const [permissions, setPermissions] = useState<PermissionWithAssignment[]>([])
+    const [initialPermissions, setInitialPermissions] = useState<PermissionWithAssignment[]>([])
     const queryClient = useQueryClient()
-
 
     const { data: roleData, isLoading, error } = useQuery<Role>({
         queryKey: ["roles", roleId],
@@ -41,7 +45,7 @@ function RouteComponent() {
         enabled: !!roleId
     })
 
-    const { data: initialPermissionData } = useQuery<PermissionWithAssignment[]>({
+    const { data: permissionData } = useQuery<PermissionWithAssignment[]>({
         queryKey: ["permissions", roleId],
         queryFn: () => getRolePermissions(roleId),
         enabled: !!roleId
@@ -49,18 +53,17 @@ function RouteComponent() {
 
     // Initialize roles state when roleData loads
     useEffect(() => {
-        if (initialPermissionData) {
-            setPermissions(initialPermissionData)
+        if (permissionData) {
+            setPermissions(permissionData)
+            setInitialPermissions(permissionData)
         }
-    }, [initialPermissionData])
-
-    console.log(initialPermissionData)
+    }, [permissionData])
 
      // Mutation for saving changes
     const updateRolesMutation = useMutation({
         mutationFn: async (selectedPermissionIds: number[]) => {
             const res = await fetch(
-                `${API_BASE_URL}/${API_VERSION.v1}/users/${roleData?.id}/roles`,
+                `${API_BASE_URL}/${API_VERSION.v1}/roles/${roleData?.id}/permissions`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -74,14 +77,18 @@ function RouteComponent() {
             return res.json();
         },
         onSuccess: () => {
-            alert("Permissions updated successfully!")
-            // Invalidate the 'roles' query to refetch fresh data from the backend
-            // This ensures that if the user navigates away and comes back, or if another part
-            // of the app relies on this data, it's always up-to-date with the backend.
-            queryClient.invalidateQueries({ queryKey: ["permisions", roleId] });
+            toaster.create({
+                title: "Role Permissions updated successfully",
+                type: "success",
+            })
+            queryClient.invalidateQueries({ queryKey: ["permissions", roleId] });
+            setEditMode(false)
         },
         onError: (error) => {
-            alert(`Error: ${error.message}`)
+            toaster.create({
+                title: error,
+                type: "error",
+            })
         },
     })
 
@@ -90,11 +97,17 @@ function RouteComponent() {
         setPermissions(prev => prev.map(permission => permission.id === permissionId ? { ...permission, assigned: !permission.assigned } : permission))
     }
 
+    // Handle cancel button click
+    const handleCancel = () => {
+        setPermissions(initialPermissions)
+        setEditMode(false)
+    }
+
     // Save permissions to backend
     const handleSave = () => {
         if (!roleData?.id) {
             alert(`Role ID ${roleData?.id} not available to save permissions.`);
-            return;
+            return
         }
         const selectedPermissionIds = permissions.filter(p => p.assigned).map(p => p.id);
         updateRolesMutation.mutate(selectedPermissionIds);
@@ -105,80 +118,105 @@ function RouteComponent() {
     if (error) return <p>Error: {error.message}</p>
 
     return (
-    <Box
-      p={6}
-      borderWidth="1px"
-      borderRadius="lg"
-      shadow="md"
-      w="100%"
-      maxW="md"
-      mx="auto" 
-    >
-      <VStack gap={5} align="stretch">
-        <Heading as="h2" size="lg"  mb={2}>
-          Role Details
-        </Heading>
-        <Text>
-          Name: {roleData?.name || 'Loading Role...'}
-        </Text>
-
-        {/* Roles Section */}
-        <Box>
-          <Text fontSize="lg" fontWeight="semibold" mb={3}>
-            Manage Permissions
-          </Text>
-          {permissions && permissions.length > 0 ? (
-            <VStack align="flex-start" gap={3}>
-              {permissions.map((permission: PermissionWithAssignment) => {
-                console.log(permission.assigned)
-                return (
-                // Use Checkbox.Root for each individual checkbox
-                <HStack key={permission.id} width="100%">
-                  <Checkbox.Root
-                    // The 'checked' prop controls the state
-                    checked={permission.assigned}
-                    // The 'onCheckedChange' event handler
-                    onCheckedChange={() => handleCheckboxChange(permission.id)}
-                    id={`permission-${permission.id}`} // Good for accessibility, links to the label
-                  >
-                    <Checkbox.HiddenInput />
-
-                    <Checkbox.Control
-                        borderRadius="md" // Rounded corners for the box
-                        borderWidth="2px"
-                    >
-                    </Checkbox.Control>
-
-                    {/* The label text */}
-                    <Checkbox.Label  ml={2}>
-                      <Text fontSize="md">
-                        {permission.name}
-                      </Text>
-                    </Checkbox.Label>
-                  </Checkbox.Root>
-                </HStack>
-              )})}
-            </VStack>
-          ) : (
-            <Text fontStyle="italic">
-              No roles available to assign.
-            </Text>
-          )}
-        </Box>
-
-        {/* Save Button */}
-        <Spacer />
-        <Button
-          onClick={handleSave}
-          loading={isLoading}
-          loadingText="Saving..."
-          spinnerPlacement="end"
-          mt={5}
-          w="100%"
+    <>
+      <Toaster />
+      <Box
+            p={6}
+            borderWidth="1px"
+            borderRadius="lg"
+            shadow="md"
+            w="100%"
+            maxW="md"
+            mx="auto"
         >
-          Save Changes
-        </Button>
-      </VStack>
-    </Box>
+            <Tabs.Root defaultValue="details" variant="plain">
+                <Tabs.List bg="bg.muted" rounded="lg" p="1">
+                    <Tabs.Trigger value="details">
+                        <LuUser />
+                        Role Details
+                    </Tabs.Trigger>
+                    <Tabs.Trigger value="permissions">
+                        <LuSquareCheck />
+                        Permissions
+                    </Tabs.Trigger>
+                    <Tabs.Indicator rounded="md" />
+                </Tabs.List>
+
+                <Tabs.Content value="details">
+                    <VStack gap={5} align="stretch" mt={4}>
+                        <Heading as="h2" size="lg" mb={2}>
+                            Role Details
+                        </Heading>
+                        <Text>
+                            Name: {roleData?.name || 'Loading Role...'}
+                        </Text>
+                    </VStack>
+                </Tabs.Content>
+
+                <Tabs.Content value="permissions">
+                    <VStack gap={5} align="stretch" mt={4}>
+                        <Text fontSize="lg" fontWeight="semibold" mb={3}>
+                            Manage Permissions
+                        </Text>
+                        {permissions && permissions.length > 0 ? (
+                            <VStack align="flex-start" gap={3}>
+                                {permissions.map((permission: PermissionWithAssignment) => (
+                                    <HStack key={permission.id} width="100%">
+                                        <Checkbox.Root
+                                            checked={permission.assigned}
+                                            onCheckedChange={() => handleCheckboxChange(permission.id)}
+                                            id={`permission-${permission.id}`}
+                                            disabled={!editMode}
+                                        >
+                                            <Checkbox.HiddenInput />
+                                            <Checkbox.Control
+                                                borderRadius="md"
+                                                borderWidth="2px"
+                                            />
+                                            <Checkbox.Label ml={2}>
+                                                <Text fontSize="md">
+                                                    {permission.name}
+                                                </Text>
+                                            </Checkbox.Label>
+                                        </Checkbox.Root>
+                                    </HStack>
+                                ))}
+                            </VStack>
+                        ) : (
+                            <Text fontStyle="italic">
+                                No permissions available to assign.
+                            </Text>
+                        )}
+                        <Spacer />
+                        <Flex justifyContent="center" mt={6}>
+                            {editMode ? (
+                                <HStack w="100%" gap={4}>
+                                    <Button
+                                        onClick={handleSave}
+                                        loading={updateRolesMutation.isPending}
+                                        loadingText="Saving..."
+                                        flex={1}
+                                    >
+                                        Save
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        onClick={handleCancel}
+                                        flex={1}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </HStack>
+                            ) : (
+                                <Button onClick={() => setEditMode(true)} w="100%" disabled={roleData?.name==="admin"}>
+                                    Edit
+                                </Button>
+                            )}
+                        </Flex>
+                    </VStack>
+                </Tabs.Content>
+            </Tabs.Root>
+        </Box>
+    </>
   )
 }

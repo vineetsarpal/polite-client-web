@@ -1,6 +1,6 @@
 import { API_BASE_URL, API_VERSION } from '@/config/config'
 import { paths } from '@/types/openapi'
-import { Box, Button, Checkbox, Heading, HStack, Spacer, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, Checkbox, Flex, Heading, HStack, Spacer, Text, VStack } from '@chakra-ui/react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
@@ -30,7 +30,9 @@ const getUserRoles = async (userId: string | any) => {
 
 function RouteComponent() {
     const { userId } = Route.useParams()
+    const [editMode, setEditMode] = useState(false)
     const [roles, setRoles] = useState<RoleWithAssignment[]>([])
+    const [initialRoles, setInitialRoles] = useState<RoleWithAssignment[]>([])
     const queryClient = useQueryClient()
 
 
@@ -40,7 +42,7 @@ function RouteComponent() {
         enabled: !!userId
     })
 
-    const { data: initialRoleData } = useQuery<RoleWithAssignment[]>({
+    const { data: roleData } = useQuery<RoleWithAssignment[]>({
         queryKey: ["roles", userId],
         queryFn: () => getUserRoles(userId),
         enabled: !!userId
@@ -48,12 +50,11 @@ function RouteComponent() {
 
     // Initialize roles state when roleData loads
     useEffect(() => {
-        if (initialRoleData) {
-            setRoles(initialRoleData)
+        if (roleData) {
+            setRoles(roleData)
+            setInitialRoles(roleData)
         }
-    }, [initialRoleData])
-
-    console.log(initialRoleData)
+    }, [roleData])
 
      // Mutation for saving changes
     const updateRolesMutation = useMutation({
@@ -87,6 +88,12 @@ function RouteComponent() {
      // Handle checkbox change
     const handleCheckboxChange = (roleId: number) => {
         setRoles(prev => prev.map(role => role.id === roleId ? { ...role, assigned: !role.assigned } : role))
+    }
+
+    // Handle cancel button click
+    const handleCancel = () => {
+        setRoles(initialRoles)
+        setEditMode(false)
     }
 
     // Save roles to backend
@@ -129,7 +136,6 @@ function RouteComponent() {
           {roles && roles.length > 0 ? (
             <VStack align="flex-start" gap={3}>
               {roles.map((role: RoleWithAssignment) => {
-                console.log(role.assigned)
                 return (
                 // Use Checkbox.Root for each individual checkbox
                 <HStack key={role.id} width="100%">
@@ -139,6 +145,7 @@ function RouteComponent() {
                     // The 'onCheckedChange' event handler
                     onCheckedChange={() => handleCheckboxChange(role.id)}
                     id={`role-${role.id}`} // Good for accessibility, links to the label
+                    disabled={!editMode}
                   >
                     <Checkbox.HiddenInput />
 
@@ -165,18 +172,32 @@ function RouteComponent() {
           )}
         </Box>
 
-        {/* Save Button */}
         <Spacer />
-        <Button
-          onClick={handleSave}
-          loading={isLoading}
-          loadingText="Saving..."
-          spinnerPlacement="end"
-          mt={5}
-          w="100%"
-        >
-          Save Changes
-        </Button>
+
+        <Flex justifyContent="center" mt={6}>
+          {editMode ? (
+              <HStack w={"100%"} gap={4}>
+                  <Button
+                    onClick={handleSave}
+                    loading={isLoading}
+                    loadingText="Saving.."
+                    flex={1}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                      variant="outline"
+                      onClick={handleCancel}
+                      flex={1}
+                  >
+                      Cancel
+                  </Button>
+              </HStack>
+              ) : (
+              <Button onClick={() => setEditMode(true)} w={"100%"}>Edit</Button>
+          )}
+        </Flex>
+        
       </VStack>
     </Box>
   )
