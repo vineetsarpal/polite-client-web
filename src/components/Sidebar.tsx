@@ -1,7 +1,7 @@
 import { Box, Flex, VStack, IconButton, Text, } from '@chakra-ui/react'
 import { Link, useMatchRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { LuUsers, LuShield, LuContact, LuFilePlus, LuMenu, LuChevronsLeft, LuChevronsRight, LuX } from 'react-icons/lu'
+import { LuUsers, LuShield, LuContact, LuFilePlus, LuChevronsLeft, LuChevronsRight } from 'react-icons/lu'
 
 function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)

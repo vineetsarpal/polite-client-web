@@ -1,5 +1,5 @@
-import { Box, Text, CloseButton, Flex, Link } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Box, Text, CloseButton, Flex } from '@chakra-ui/react'
+import { useState } from 'react'
 
 export const TopBanner = () => {
   const [isVisible, setIsVisible] = useState(true)
