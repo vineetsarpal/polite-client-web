@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/_dashboard/users/')({
+export const Route = createFileRoute('/dashboard/users/')({
   component: RouteComponent,
 })
 
@@ -84,7 +84,7 @@ function RouteComponent() {
         {
             data?.map((user: User) => (
                 <Card.Root key={user.id}> 
-                    <Link to="/users/$userId" params={{ userId: user.id.toString() }} >
+                    <Link to="/dashboard/users/$userId" params={{ userId: user.id.toString() }} >
                     <Card.Header>{user.username}</Card.Header>
                     <Card.Body>
                         Email: {user.email}

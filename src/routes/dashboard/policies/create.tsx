@@ -7,7 +7,7 @@ import { API_BASE_URL, API_VERSION } from '@/config/config'
 import { useAuth } from '@/context/AuthContext'
 // import { useAuth0 } from '@auth0/auth0-react'
 
-export const Route = createFileRoute('/_dashboard/policies/create')({
+export const Route = createFileRoute('/dashboard/policies/create')({
   component: RouteComponent,
 })
 

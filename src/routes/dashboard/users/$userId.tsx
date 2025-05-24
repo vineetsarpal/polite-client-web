@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 
-export const Route = createFileRoute('/_dashboard/users/$userId')({
+export const Route = createFileRoute('/dashboard/users/$userId')({
   component: RouteComponent,
 })
 

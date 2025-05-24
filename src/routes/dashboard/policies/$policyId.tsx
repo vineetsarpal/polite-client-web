@@ -4,20 +4,21 @@ import { paths } from "@/types/openapi"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { API_BASE_URL, API_VERSION } from "@/config/config"
+
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAuth } from "@/context/AuthContext"
 // import { useAuth0 } from "@auth0/auth0-react"
 
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_dashboard/contacts/$contactId')({
+export const Route = createFileRoute('/dashboard/policies/$policyId')({
   component: RouteComponent,
 })
 
-type Contact = paths["/api/v1/contacts/{contact_id}"]["get"]["responses"]["200"]["content"]["application/json"]
-type UpdatePayload = paths["/api/v1/contacts/{contact_id}"]["put"]["requestBody"]["content"]["application/json"]
+type Policy = paths["/api/v1/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
+type UpdatePayload = paths["/api/v1/policies/{policy_id}"]["put"]["requestBody"]["content"]["application/json"]
 
-const getContact = async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts/${id}`)
+const getPolicy = async (id: string) => {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`)
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
@@ -25,7 +26,7 @@ const getContact = async (id: string) => {
 const updatePolicy = async (payload : { id: string, data: UpdatePayload, token: string | null, token0: string | null }) => {
     const { id, data, token, token0 } = payload
     const bearerToken = token ? token : token0
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`, {
         method: 'PUT',
         headers: {
             "Content-Type": "application/json",
@@ -38,9 +39,9 @@ const updatePolicy = async (payload : { id: string, data: UpdatePayload, token: 
 }
 
 function RouteComponent() {
+    const { policyId } = Route.useParams()
     const { token } = useAuth()
     const [editMode, setEditMode] = useState(false)
-    const { contactId } = Route.useParams()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
 
@@ -55,36 +56,47 @@ function RouteComponent() {
     //   fetchAuth0Token()
     // }, [getAccessTokenSilently])
 
-    const { data, isLoading, error } = useQuery<Contact>({
-        queryKey: ["policies", contactId],
-        queryFn: () => getContact(contactId),
+    const { data, isLoading, error } = useQuery<Policy>({
+        queryKey: ["policies", policyId],
+        queryFn: () => getPolicy(policyId),
     })
 
-    // const toDateInputFormat = (dateString: string) => {
-    //     const date = new Date(dateString)
-    //     return date.toISOString()
-    // }
+    const toDateInputFormat = (dateString: string) => {
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0]
+    }
 
     const { register, handleSubmit, reset } = useForm<UpdatePayload>({
-        defaultValues: data 
-    })
+        defaultValues: data ? {
+            ...data,
+            start_date: toDateInputFormat(data.start_date),
+            end_date: toDateInputFormat(data.end_date),
+        } : {},
+      })
 
     // Reset the form when the data is loaded or updated
     useEffect(() => {
-        reset(data)
+        if (data) {
+            const formatted = {
+                ...data,
+                start_date: toDateInputFormat(data.start_date),
+                end_date: toDateInputFormat(data.end_date),
+            }
+            reset(formatted)
+        }
     }, [data, reset])
 
     const { mutate } = useMutation({
         mutationFn: updatePolicy,
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['contacts', contactId] });
-            navigate({ to: `/contacts/${contactId}`})
+            queryClient.invalidateQueries({ queryKey: ['policies', policyId] });
+            navigate({ to: `/policies/${policyId}`})
             setEditMode(false)
         }
     })
 
     const onSubmit = (formData: UpdatePayload) => {
-        mutate({ id: contactId, data: formData, token, token0: null })
+        mutate({ id: policyId, data: formData, token, token0: null })
     }
 
     if (isLoading || !data) return <p>Loading...</p>
@@ -95,24 +107,44 @@ function RouteComponent() {
     <form onSubmit={handleSubmit(onSubmit)}>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 3, lg: 4 }} gap={4}>
             <Field.Root>
-                <Field.Label>First Name</Field.Label>
-                <Input {...register("first_name")} disabled={!editMode} />
+                <Field.Label>LOB</Field.Label>
+                <Input {...register("lob")} disabled={true} />
             </Field.Root>
             <Field.Root>
-                <Field.Label>Last Name</Field.Label>
-                <Input {...register("last_name")} disabled={!editMode} />
+                <Field.Label>License Plate</Field.Label>
+                <Input {...register("license_plate")} disabled={!editMode} />
             </Field.Root>
             <Field.Root>
-                <Field.Label>Type</Field.Label>
-                <Input {...register("type")} disabled={true} />
+                <Field.Label>VIN</Field.Label>
+                <Input {...register("vin")} disabled={!editMode} />
             </Field.Root>
             <Field.Root>
-                <Field.Label>DOB</Field.Label>
-                <Input {...register("dob")} disabled={!editMode} />
+                <Field.Label>Sum Insured</Field.Label>
+                <Input {...register("sum_insured")} disabled={!editMode} />
             </Field.Root>
             <Field.Root>
-                <Field.Label>Email</Field.Label>
-                <Input {...register("email")} disabled={!editMode} />
+                <Field.Label>Base Premium</Field.Label>
+                <Input {...register("base_premium")} disabled={!editMode} />
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>Net Premium</Field.Label>
+                <Input {...register("net_premium")} disabled={!editMode} />
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>Tax</Field.Label>
+                <Input {...register("tax")} disabled={!editMode} />
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>Start Date</Field.Label>
+                <Input type="date" {...register("start_date")} disabled={true} />
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>End Date</Field.Label>
+                <Input type="date" {...register("end_date")} disabled={true} />
+            </Field.Root>
+            <Field.Root>
+                <Field.Label>Policyholder ID</Field.Label>
+                <Input {...register("policyholder_id")} disabled={!editMode} />
             </Field.Root>
         </SimpleGrid>
 

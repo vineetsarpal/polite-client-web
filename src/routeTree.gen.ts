@@ -14,19 +14,20 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as PrivateImport } from './routes/private'
 import { Route as LoginImport } from './routes/login'
 import { Route as AboutImport } from './routes/about'
-import { Route as DashboardRouteImport } from './routes/_dashboard/route'
+import { Route as DashboardRouteImport } from './routes/dashboard/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as PermissionsIndexImport } from './routes/permissions/index'
-import { Route as DashboardUsersIndexImport } from './routes/_dashboard/users/index'
-import { Route as DashboardRolesIndexImport } from './routes/_dashboard/roles/index'
-import { Route as DashboardPoliciesIndexImport } from './routes/_dashboard/policies/index'
-import { Route as DashboardContactsIndexImport } from './routes/_dashboard/contacts/index'
-import { Route as DashboardUsersUserIdImport } from './routes/_dashboard/users/$userId'
-import { Route as DashboardRolesRoleIdImport } from './routes/_dashboard/roles/$roleId'
-import { Route as DashboardPoliciesUpdateImport } from './routes/_dashboard/policies/update'
-import { Route as DashboardPoliciesCreateImport } from './routes/_dashboard/policies/create'
-import { Route as DashboardPoliciesPolicyIdImport } from './routes/_dashboard/policies/$policyId'
-import { Route as DashboardContactsContactIdImport } from './routes/_dashboard/contacts/$contactId'
+import { Route as DashboardIndexImport } from './routes/dashboard/index'
+import { Route as DashboardUsersIndexImport } from './routes/dashboard/users/index'
+import { Route as DashboardRolesIndexImport } from './routes/dashboard/roles/index'
+import { Route as DashboardPoliciesIndexImport } from './routes/dashboard/policies/index'
+import { Route as DashboardContactsIndexImport } from './routes/dashboard/contacts/index'
+import { Route as DashboardUsersUserIdImport } from './routes/dashboard/users/$userId'
+import { Route as DashboardRolesRoleIdImport } from './routes/dashboard/roles/$roleId'
+import { Route as DashboardPoliciesUpdateImport } from './routes/dashboard/policies/update'
+import { Route as DashboardPoliciesCreateImport } from './routes/dashboard/policies/create'
+import { Route as DashboardPoliciesPolicyIdImport } from './routes/dashboard/policies/$policyId'
+import { Route as DashboardContactsContactIdImport } from './routes/dashboard/contacts/$contactId'
 
 // Create/Update Routes
 
@@ -49,7 +50,8 @@ const AboutRoute = AboutImport.update({
 } as any)
 
 const DashboardRouteRoute = DashboardRouteImport.update({
-  id: '/_dashboard',
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -63,6 +65,12 @@ const PermissionsIndexRoute = PermissionsIndexImport.update({
   id: '/permissions/',
   path: '/permissions/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const DashboardIndexRoute = DashboardIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRouteRoute,
 } as any)
 
 const DashboardUsersIndexRoute = DashboardUsersIndexImport.update({
@@ -138,10 +146,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/_dashboard': {
-      id: '/_dashboard'
-      path: ''
-      fullPath: ''
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRoute
     }
@@ -166,6 +174,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateImport
       parentRoute: typeof rootRoute
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexImport
+      parentRoute: typeof DashboardRouteImport
+    }
     '/permissions/': {
       id: '/permissions/'
       path: '/permissions'
@@ -173,73 +188,73 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PermissionsIndexImport
       parentRoute: typeof rootRoute
     }
-    '/_dashboard/contacts/$contactId': {
-      id: '/_dashboard/contacts/$contactId'
+    '/dashboard/contacts/$contactId': {
+      id: '/dashboard/contacts/$contactId'
       path: '/contacts/$contactId'
-      fullPath: '/contacts/$contactId'
+      fullPath: '/dashboard/contacts/$contactId'
       preLoaderRoute: typeof DashboardContactsContactIdImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/policies/$policyId': {
-      id: '/_dashboard/policies/$policyId'
+    '/dashboard/policies/$policyId': {
+      id: '/dashboard/policies/$policyId'
       path: '/policies/$policyId'
-      fullPath: '/policies/$policyId'
+      fullPath: '/dashboard/policies/$policyId'
       preLoaderRoute: typeof DashboardPoliciesPolicyIdImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/policies/create': {
-      id: '/_dashboard/policies/create'
+    '/dashboard/policies/create': {
+      id: '/dashboard/policies/create'
       path: '/policies/create'
-      fullPath: '/policies/create'
+      fullPath: '/dashboard/policies/create'
       preLoaderRoute: typeof DashboardPoliciesCreateImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/policies/update': {
-      id: '/_dashboard/policies/update'
+    '/dashboard/policies/update': {
+      id: '/dashboard/policies/update'
       path: '/policies/update'
-      fullPath: '/policies/update'
+      fullPath: '/dashboard/policies/update'
       preLoaderRoute: typeof DashboardPoliciesUpdateImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/roles/$roleId': {
-      id: '/_dashboard/roles/$roleId'
+    '/dashboard/roles/$roleId': {
+      id: '/dashboard/roles/$roleId'
       path: '/roles/$roleId'
-      fullPath: '/roles/$roleId'
+      fullPath: '/dashboard/roles/$roleId'
       preLoaderRoute: typeof DashboardRolesRoleIdImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/users/$userId': {
-      id: '/_dashboard/users/$userId'
+    '/dashboard/users/$userId': {
+      id: '/dashboard/users/$userId'
       path: '/users/$userId'
-      fullPath: '/users/$userId'
+      fullPath: '/dashboard/users/$userId'
       preLoaderRoute: typeof DashboardUsersUserIdImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/contacts/': {
-      id: '/_dashboard/contacts/'
+    '/dashboard/contacts/': {
+      id: '/dashboard/contacts/'
       path: '/contacts'
-      fullPath: '/contacts'
+      fullPath: '/dashboard/contacts'
       preLoaderRoute: typeof DashboardContactsIndexImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/policies/': {
-      id: '/_dashboard/policies/'
+    '/dashboard/policies/': {
+      id: '/dashboard/policies/'
       path: '/policies'
-      fullPath: '/policies'
+      fullPath: '/dashboard/policies'
       preLoaderRoute: typeof DashboardPoliciesIndexImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/roles/': {
-      id: '/_dashboard/roles/'
+    '/dashboard/roles/': {
+      id: '/dashboard/roles/'
       path: '/roles'
-      fullPath: '/roles'
+      fullPath: '/dashboard/roles'
       preLoaderRoute: typeof DashboardRolesIndexImport
       parentRoute: typeof DashboardRouteImport
     }
-    '/_dashboard/users/': {
-      id: '/_dashboard/users/'
+    '/dashboard/users/': {
+      id: '/dashboard/users/'
       path: '/users'
-      fullPath: '/users'
+      fullPath: '/dashboard/users'
       preLoaderRoute: typeof DashboardUsersIndexImport
       parentRoute: typeof DashboardRouteImport
     }
@@ -249,6 +264,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface DashboardRouteRouteChildren {
+  DashboardIndexRoute: typeof DashboardIndexRoute
   DashboardContactsContactIdRoute: typeof DashboardContactsContactIdRoute
   DashboardPoliciesPolicyIdRoute: typeof DashboardPoliciesPolicyIdRoute
   DashboardPoliciesCreateRoute: typeof DashboardPoliciesCreateRoute
@@ -262,6 +278,7 @@ interface DashboardRouteRouteChildren {
 }
 
 const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardIndexRoute: DashboardIndexRoute,
   DashboardContactsContactIdRoute: DashboardContactsContactIdRoute,
   DashboardPoliciesPolicyIdRoute: DashboardPoliciesPolicyIdRoute,
   DashboardPoliciesCreateRoute: DashboardPoliciesCreateRoute,
@@ -280,117 +297,121 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof DashboardRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/private': typeof PrivateRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/permissions': typeof PermissionsIndexRoute
-  '/contacts/$contactId': typeof DashboardContactsContactIdRoute
-  '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
-  '/policies/create': typeof DashboardPoliciesCreateRoute
-  '/policies/update': typeof DashboardPoliciesUpdateRoute
-  '/roles/$roleId': typeof DashboardRolesRoleIdRoute
-  '/users/$userId': typeof DashboardUsersUserIdRoute
-  '/contacts': typeof DashboardContactsIndexRoute
-  '/policies': typeof DashboardPoliciesIndexRoute
-  '/roles': typeof DashboardRolesIndexRoute
-  '/users': typeof DashboardUsersIndexRoute
+  '/dashboard/contacts/$contactId': typeof DashboardContactsContactIdRoute
+  '/dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
+  '/dashboard/policies/create': typeof DashboardPoliciesCreateRoute
+  '/dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/dashboard/roles/$roleId': typeof DashboardRolesRoleIdRoute
+  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
+  '/dashboard/contacts': typeof DashboardContactsIndexRoute
+  '/dashboard/policies': typeof DashboardPoliciesIndexRoute
+  '/dashboard/roles': typeof DashboardRolesIndexRoute
+  '/dashboard/users': typeof DashboardUsersIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/private': typeof PrivateRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/permissions': typeof PermissionsIndexRoute
-  '/contacts/$contactId': typeof DashboardContactsContactIdRoute
-  '/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
-  '/policies/create': typeof DashboardPoliciesCreateRoute
-  '/policies/update': typeof DashboardPoliciesUpdateRoute
-  '/roles/$roleId': typeof DashboardRolesRoleIdRoute
-  '/users/$userId': typeof DashboardUsersUserIdRoute
-  '/contacts': typeof DashboardContactsIndexRoute
-  '/policies': typeof DashboardPoliciesIndexRoute
-  '/roles': typeof DashboardRolesIndexRoute
-  '/users': typeof DashboardUsersIndexRoute
+  '/dashboard/contacts/$contactId': typeof DashboardContactsContactIdRoute
+  '/dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
+  '/dashboard/policies/create': typeof DashboardPoliciesCreateRoute
+  '/dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/dashboard/roles/$roleId': typeof DashboardRolesRoleIdRoute
+  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
+  '/dashboard/contacts': typeof DashboardContactsIndexRoute
+  '/dashboard/policies': typeof DashboardPoliciesIndexRoute
+  '/dashboard/roles': typeof DashboardRolesIndexRoute
+  '/dashboard/users': typeof DashboardUsersIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_dashboard': typeof DashboardRouteRouteWithChildren
+  '/dashboard': typeof DashboardRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/private': typeof PrivateRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/permissions/': typeof PermissionsIndexRoute
-  '/_dashboard/contacts/$contactId': typeof DashboardContactsContactIdRoute
-  '/_dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
-  '/_dashboard/policies/create': typeof DashboardPoliciesCreateRoute
-  '/_dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
-  '/_dashboard/roles/$roleId': typeof DashboardRolesRoleIdRoute
-  '/_dashboard/users/$userId': typeof DashboardUsersUserIdRoute
-  '/_dashboard/contacts/': typeof DashboardContactsIndexRoute
-  '/_dashboard/policies/': typeof DashboardPoliciesIndexRoute
-  '/_dashboard/roles/': typeof DashboardRolesIndexRoute
-  '/_dashboard/users/': typeof DashboardUsersIndexRoute
+  '/dashboard/contacts/$contactId': typeof DashboardContactsContactIdRoute
+  '/dashboard/policies/$policyId': typeof DashboardPoliciesPolicyIdRoute
+  '/dashboard/policies/create': typeof DashboardPoliciesCreateRoute
+  '/dashboard/policies/update': typeof DashboardPoliciesUpdateRoute
+  '/dashboard/roles/$roleId': typeof DashboardRolesRoleIdRoute
+  '/dashboard/users/$userId': typeof DashboardUsersUserIdRoute
+  '/dashboard/contacts/': typeof DashboardContactsIndexRoute
+  '/dashboard/policies/': typeof DashboardPoliciesIndexRoute
+  '/dashboard/roles/': typeof DashboardRolesIndexRoute
+  '/dashboard/users/': typeof DashboardUsersIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | ''
+    | '/dashboard'
     | '/about'
     | '/login'
     | '/private'
+    | '/dashboard/'
     | '/permissions'
-    | '/contacts/$contactId'
-    | '/policies/$policyId'
-    | '/policies/create'
-    | '/policies/update'
-    | '/roles/$roleId'
-    | '/users/$userId'
-    | '/contacts'
-    | '/policies'
-    | '/roles'
-    | '/users'
+    | '/dashboard/contacts/$contactId'
+    | '/dashboard/policies/$policyId'
+    | '/dashboard/policies/create'
+    | '/dashboard/policies/update'
+    | '/dashboard/roles/$roleId'
+    | '/dashboard/users/$userId'
+    | '/dashboard/contacts'
+    | '/dashboard/policies'
+    | '/dashboard/roles'
+    | '/dashboard/users'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | ''
     | '/about'
     | '/login'
     | '/private'
+    | '/dashboard'
     | '/permissions'
-    | '/contacts/$contactId'
-    | '/policies/$policyId'
-    | '/policies/create'
-    | '/policies/update'
-    | '/roles/$roleId'
-    | '/users/$userId'
-    | '/contacts'
-    | '/policies'
-    | '/roles'
-    | '/users'
+    | '/dashboard/contacts/$contactId'
+    | '/dashboard/policies/$policyId'
+    | '/dashboard/policies/create'
+    | '/dashboard/policies/update'
+    | '/dashboard/roles/$roleId'
+    | '/dashboard/users/$userId'
+    | '/dashboard/contacts'
+    | '/dashboard/policies'
+    | '/dashboard/roles'
+    | '/dashboard/users'
   id:
     | '__root__'
     | '/'
-    | '/_dashboard'
+    | '/dashboard'
     | '/about'
     | '/login'
     | '/private'
+    | '/dashboard/'
     | '/permissions/'
-    | '/_dashboard/contacts/$contactId'
-    | '/_dashboard/policies/$policyId'
-    | '/_dashboard/policies/create'
-    | '/_dashboard/policies/update'
-    | '/_dashboard/roles/$roleId'
-    | '/_dashboard/users/$userId'
-    | '/_dashboard/contacts/'
-    | '/_dashboard/policies/'
-    | '/_dashboard/roles/'
-    | '/_dashboard/users/'
+    | '/dashboard/contacts/$contactId'
+    | '/dashboard/policies/$policyId'
+    | '/dashboard/policies/create'
+    | '/dashboard/policies/update'
+    | '/dashboard/roles/$roleId'
+    | '/dashboard/users/$userId'
+    | '/dashboard/contacts/'
+    | '/dashboard/policies/'
+    | '/dashboard/roles/'
+    | '/dashboard/users/'
   fileRoutesById: FileRoutesById
 }
 
@@ -423,7 +444,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_dashboard",
+        "/dashboard",
         "/about",
         "/login",
         "/private",
@@ -433,19 +454,20 @@ export const routeTree = rootRoute
     "/": {
       "filePath": "index.tsx"
     },
-    "/_dashboard": {
-      "filePath": "_dashboard/route.tsx",
+    "/dashboard": {
+      "filePath": "dashboard/route.tsx",
       "children": [
-        "/_dashboard/contacts/$contactId",
-        "/_dashboard/policies/$policyId",
-        "/_dashboard/policies/create",
-        "/_dashboard/policies/update",
-        "/_dashboard/roles/$roleId",
-        "/_dashboard/users/$userId",
-        "/_dashboard/contacts/",
-        "/_dashboard/policies/",
-        "/_dashboard/roles/",
-        "/_dashboard/users/"
+        "/dashboard/",
+        "/dashboard/contacts/$contactId",
+        "/dashboard/policies/$policyId",
+        "/dashboard/policies/create",
+        "/dashboard/policies/update",
+        "/dashboard/roles/$roleId",
+        "/dashboard/users/$userId",
+        "/dashboard/contacts/",
+        "/dashboard/policies/",
+        "/dashboard/roles/",
+        "/dashboard/users/"
       ]
     },
     "/about": {
@@ -457,48 +479,52 @@ export const routeTree = rootRoute
     "/private": {
       "filePath": "private.tsx"
     },
+    "/dashboard/": {
+      "filePath": "dashboard/index.tsx",
+      "parent": "/dashboard"
+    },
     "/permissions/": {
       "filePath": "permissions/index.tsx"
     },
-    "/_dashboard/contacts/$contactId": {
-      "filePath": "_dashboard/contacts/$contactId.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/contacts/$contactId": {
+      "filePath": "dashboard/contacts/$contactId.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/policies/$policyId": {
-      "filePath": "_dashboard/policies/$policyId.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/policies/$policyId": {
+      "filePath": "dashboard/policies/$policyId.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/policies/create": {
-      "filePath": "_dashboard/policies/create.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/policies/create": {
+      "filePath": "dashboard/policies/create.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/policies/update": {
-      "filePath": "_dashboard/policies/update.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/policies/update": {
+      "filePath": "dashboard/policies/update.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/roles/$roleId": {
-      "filePath": "_dashboard/roles/$roleId.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/roles/$roleId": {
+      "filePath": "dashboard/roles/$roleId.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/users/$userId": {
-      "filePath": "_dashboard/users/$userId.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/users/$userId": {
+      "filePath": "dashboard/users/$userId.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/contacts/": {
-      "filePath": "_dashboard/contacts/index.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/contacts/": {
+      "filePath": "dashboard/contacts/index.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/policies/": {
-      "filePath": "_dashboard/policies/index.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/policies/": {
+      "filePath": "dashboard/policies/index.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/roles/": {
-      "filePath": "_dashboard/roles/index.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/roles/": {
+      "filePath": "dashboard/roles/index.tsx",
+      "parent": "/dashboard"
     },
-    "/_dashboard/users/": {
-      "filePath": "_dashboard/users/index.tsx",
-      "parent": "/_dashboard"
+    "/dashboard/users/": {
+      "filePath": "dashboard/users/index.tsx",
+      "parent": "/dashboard"
     }
   }
 }

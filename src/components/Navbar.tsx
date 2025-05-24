@@ -1,6 +1,6 @@
-import { Button, Flex, Heading, HStack, Spacer, Text } from "@chakra-ui/react"
+import { Button, Flex, Heading, HStack, Spacer, Text, Theme } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
-import { ColorModeButton } from "@/components/ui/color-mode"
+import { ColorModeButton, useColorModeValue } from "@/components/ui/color-mode"
 import AuthButton from "./AuthButton"
 import { useQuery } from "@tanstack/react-query"
 import { useAuth } from "@/context/AuthContext"
@@ -11,6 +11,7 @@ import { userService } from "@/services/userService"
 function Navbar() {
     const { isLoggedIn, token } = useAuth()
     // const { user: auth0User, isAuthenticated  } = useAuth0()
+    const bgNav = useColorModeValue('gray.50','')
 
     const { data } = useQuery({
         queryKey: ["currentUser", token],
@@ -20,7 +21,7 @@ function Navbar() {
     })
 
   return (
-    <Flex as={"nav"} p={2} mx={10} gap={2} alignItems={"center"} wrap={"wrap"}>
+    <Flex as={"nav"} px={10} py={2} gap={2} alignItems={"center"} wrap={"wrap"} bg={isLoggedIn ? bgNav : ''}>
         <HStack gap={10}>
             <Link to="/"  activeProps={{ className: 'font-bold' }} activeOptions={{ exact: true }}>
                 <Heading size="3xl" fontWeight="bold">Polite</Heading>
@@ -29,12 +30,12 @@ function Navbar() {
                 About
             </Link>
         </HStack>
-       
+    
         <Spacer />
 
         <HStack gap={5}>
             {(isLoggedIn) && 
-                <Link to='/policies'>
+                <Link to='/dashboard'>
                     <Button variant={"solid"} rounded="full">Dashboard</Button>
                 </Link>
             }   

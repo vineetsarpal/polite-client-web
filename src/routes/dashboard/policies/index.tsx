@@ -9,7 +9,7 @@ import { useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 // import { useAuth0 } from "@auth0/auth0-react"
 
-export const Route = createFileRoute('/_dashboard/policies/')({
+export const Route = createFileRoute('/dashboard/policies/')({
   component: RouteComponent,
 })
 
@@ -89,7 +89,7 @@ function RouteComponent() {
       {
         data?.map((policy: Policy) => (
               <Card.Root key={policy.id}> 
-                <Link to="/policies/$policyId" params={{ policyId: policy.id.toString() }} >
+                <Link to="/dashboard/policies/$policyId" params={{ policyId: policy.id.toString() }} >
                   <Card.Header>Policy ID: {policy.id}</Card.Header>
                   <Card.Body>
                       Sum Insured: {policy.sum_insured}

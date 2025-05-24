@@ -11,11 +11,11 @@ function Sidebar() {
 
   // Navigation items with icons
   const navItems = [
-    { to: '/users', label: 'Users', icon: LuUsers },
-    { to: '/roles', label: 'Roles', icon: LuShield },
-    { to: '/contacts', label: 'Contacts', icon: LuContact },
-    { to: '/policies', label: 'Policies', icon: LuShield },
-    { to: '/policies/create', label: 'Create a Policy', icon: LuFilePlus },
+    { to: '/dashboard/users', label: 'Users', icon: LuUsers },
+    { to: '/dashboard/roles', label: 'Roles', icon: LuShield },
+    { to: '/dashboard/contacts', label: 'Contacts', icon: LuContact },
+    { to: '/dashboard/policies', label: 'Policies', icon: LuShield },
+    { to: '/dashboard/policies/create', label: 'Create a Policy', icon: LuFilePlus },
   ]
 
   // Toggle collapse state for desktop
@@ -37,7 +37,7 @@ function Sidebar() {
         overflow="hidden"
       >
         {/* Vertical Line Aligned with Toggle Button */}
-        <Box
+        {/* <Box
           position="absolute"
           top={0}
           bottom={0}
@@ -45,7 +45,7 @@ function Sidebar() {
           w="1px"
           bg={"gray.200"}
           display={{ base: 'none', md: 'block' }}
-        />
+        /> */}
 
         <Flex
           direction="column"
@@ -102,31 +102,3 @@ function Sidebar() {
 }
 
 export default Sidebar
-
-// === OLDER ===
-// import { VStack } from "@chakra-ui/react"
-// import { Link } from "@tanstack/react-router"
-
-// function Sidebar() {
-//   return (
-//     <VStack p={10} align={"start"}>
-//         <Link to={'/users'}>
-//             Users
-//         </Link>
-//         <Link to={'/roles'}>
-//             Roles
-//         </Link>
-//         <Link to={'/contacts'}>
-//             Contacts
-//         </Link>
-//         <Link to={'/policies'}>
-//             Policies
-//         </Link>
-//         <Link to={'/policies/create'}>
-//             Create a Policy
-//         </Link>
-//     </VStack>
-//   )
-// }
-
-// export default Sidebar
