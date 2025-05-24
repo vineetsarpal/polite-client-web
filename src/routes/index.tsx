@@ -51,7 +51,7 @@ function Index() {
                 <Button colorScheme="gray" size="lg">Get Started</Button>
               </Link>
               ) : (
-                <Link to="/policies">
+                <Link to="/dashboard">
                   <Button size="lg">Dashboard</Button>
                 </Link>
               )

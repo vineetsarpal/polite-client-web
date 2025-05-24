@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, HStack, Spacer, Text, Theme } from "@chakra-ui/react"
+import { Button, Flex, Heading, HStack, Spacer, Text } from "@chakra-ui/react"
 import { Link } from "@tanstack/react-router"
 import { ColorModeButton, useColorModeValue } from "@/components/ui/color-mode"
 import AuthButton from "./AuthButton"

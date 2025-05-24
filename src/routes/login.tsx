@@ -42,7 +42,7 @@ function RouteComponent() {
         mutationFn: authService.signIn,
         onSuccess: (data) => {
             login(data.access_token),
-            navigate({ to: "/policies" })
+            navigate({ to: "/dashboard" })
         },
     })
 

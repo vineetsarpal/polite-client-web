@@ -54,7 +54,7 @@ function RouteComponent() {
         mutationFn: createPolicy,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['policies']}),
-            navigate({ to: "/policies" })
+            navigate({ to: "/dashboard/policies" })
         }
     })
 
