@@ -1,8 +1,8 @@
 import { paths } from '@/types/openapi'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
-import { SimpleGrid, Input, Button, Field, Flex, Text } from '@chakra-ui/react'
+import { SimpleGrid, Input, Button, Field, Flex, Text, NativeSelect } from '@chakra-ui/react'
 import { API_BASE_URL, API_VERSION } from '@/config/config'
 import { useAuth } from '@/context/AuthContext'
 // import { useAuth0 } from '@auth0/auth0-react'
@@ -12,6 +12,24 @@ export const Route = createFileRoute('/dashboard/policies/create')({
 })
 
 type FormData = paths["/api/v1/policies/"]["post"]["requestBody"]["content"]["application/json"]
+type Contact = paths["/api/v1/contacts/{contact_id}"]["get"]["responses"]["200"]["content"]["application/json"]
+
+const fetchContacts = async (token: string | null, token0: string | null) => {
+    const bearerToken = token ? token : token0
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${bearerToken}`,
+        },
+    })
+    if (!res.ok) {
+        const errorResponse = await res.json()
+        console.error(errorResponse)
+        throw new Error("Failed to fetch contacts")
+    }
+    return res.json()
+}
 
 const createPolicy = async (payload: { data: FormData, token: string | null, token0: string | null }) => {
     const { data, token, token0 } = payload
@@ -49,6 +67,12 @@ function RouteComponent() {
     //   }
     //   fetchAuth0Token()
     // }, [getAccessTokenSilently])
+
+    const { data: contacts, isLoading: isLoadingContacts } = useQuery<Contact[]>({
+        queryKey: ['contacts', token], // Invalidate if token changes
+        queryFn: () => fetchContacts(token, null), // Assuming 'token' is your primary token, pass auth0Token if needed
+        enabled: !!token, // Only run this query if the token is available
+    })
 
     const { mutate, isPending, error } = useMutation({
         mutationFn: createPolicy,
@@ -102,8 +126,18 @@ function RouteComponent() {
                 <Input type='date' {...register("end_date")} />
             </Field.Root>
             <Field.Root>
-                <Field.Label>Policyholder ID</Field.Label>
-                <Input {...register("policyholder_id")} />
+                <Field.Label>Policyholder</Field.Label>
+                 {isLoadingContacts ? (
+                    <Text>Loading contacts...</Text>
+                ) : (
+                   <NativeSelect.Root>
+                        <NativeSelect.Field placeholder='Select Policyholder' {...register("policyholder_id")}>
+                            {contacts?.map((contact: Contact) => (
+                                <option key={contact.id} value={contact.id}>{contact.first_name} {contact.last_name}</option>
+                            ))}
+                        </NativeSelect.Field>   
+                   </NativeSelect.Root>
+                )}
             </Field.Root>
 
         </SimpleGrid>

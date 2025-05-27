@@ -16,8 +16,13 @@ export const Route = createFileRoute('/dashboard/contacts/$contactId')({
 type Contact = paths["/api/v1/contacts/{contact_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 type UpdatePayload = paths["/api/v1/contacts/{contact_id}"]["put"]["requestBody"]["content"]["application/json"]
 
-const getContact = async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts/${id}`)
+const getContact = async (id: string, token: string | null) => {
+    const bearerToken = token
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/contacts/${id}`, {
+        headers: {
+            "Authorization": `Bearer ${bearerToken}`
+        }
+    })
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
@@ -57,7 +62,7 @@ function RouteComponent() {
 
     const { data, isLoading, error } = useQuery<Contact>({
         queryKey: ["policies", contactId],
-        queryFn: () => getContact(contactId),
+        queryFn: () => getContact(contactId, token),
     })
 
     // const toDateInputFormat = (dateString: string) => {

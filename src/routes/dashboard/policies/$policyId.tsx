@@ -17,8 +17,13 @@ export const Route = createFileRoute('/dashboard/policies/$policyId')({
 type Policy = paths["/api/v1/policies/{policy_id}"]["get"]["responses"]["200"]["content"]["application/json"]
 type UpdatePayload = paths["/api/v1/policies/{policy_id}"]["put"]["requestBody"]["content"]["application/json"]
 
-const getPolicy = async (id: string) => {
-    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`)
+const getPolicy = async (id: string, token: string | null) => {
+    const bearerToken = token
+    const res = await fetch(`${API_BASE_URL}/${API_VERSION.v1}/policies/${id}`, {
+         headers: {
+            "Authorization": `Bearer ${bearerToken}`,
+        },
+    })
     if (!res.ok) throw new Error("Error fetching data!")
     return res.json()
 }
@@ -58,7 +63,7 @@ function RouteComponent() {
 
     const { data, isLoading, error } = useQuery<Policy>({
         queryKey: ["policies", policyId],
-        queryFn: () => getPolicy(policyId),
+        queryFn: () => getPolicy(policyId, token),
     })
 
     const toDateInputFormat = (dateString: string) => {
@@ -69,8 +74,8 @@ function RouteComponent() {
     const { register, handleSubmit, reset } = useForm<UpdatePayload>({
         defaultValues: data ? {
             ...data,
-            start_date: toDateInputFormat(data.start_date),
-            end_date: toDateInputFormat(data.end_date),
+            start_date: toDateInputFormat(data?.start_date),
+            end_date: toDateInputFormat(data?.end_date),
         } : {},
       })
 
